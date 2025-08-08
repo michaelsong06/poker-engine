@@ -1,0 +1,142 @@
+/* === Global base === */
+* {
+    font-family: 'Roboto Slab', serif;
+    color: #F5E6D3; /* Warm ivory */
+}
+
+/* Headings and titles use Roboto Slab */
+QGroupBox::title, QLabel.title, QLabel.heading {
+    font-family: 'Roboto Slab', serif;
+    font-weight: 700;
+    color: rgba(255, 230, 180, 0.95);
+}
+
+/* Background */
+QMainWindow {
+    background-image: url(:/assets/background.png);
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    background-origin: content;
+}
+
+/* Buttons: deep burgundy with golden accents */
+QPushButton {
+    background-color: rgba(100, 25, 25, 0.85);
+    border: 1.8px solid rgba(210, 180, 120, 0.9);
+    border-radius: 6px;
+    padding: 6px 14px;
+    color: #F5E6D3;
+    font-weight: 600;
+}
+QPushButton:hover {
+    background-color: rgba(140, 40, 40, 0.95);
+    border-color: rgba(255, 215, 90, 1);
+}
+QPushButton:pressed {
+    background-color: rgba(80, 20, 20, 0.9);
+    border-color: rgba(180, 150, 90, 0.8);
+}
+QPushButton:focus {
+    outline: none;
+}
+QPushButton:disabled {
+    background-color: #555;
+    color: #aaa;
+    border: 1.8px solid #333;
+}
+
+/* Text inputs and editors: charcoal with soft gold border */
+QLineEdit, QTextEdit {
+    background-color: rgba(40, 30, 30, 0.9);
+    border: 1.8px solid rgba(190, 160, 110, 0.95);
+    border-radius: 5px;
+    padding: 6px 8px;
+    color: #F5E6D3;
+    selection-background-color: rgba(255, 215, 120, 0.6);;
+}
+
+QTextEdit#display_errors {
+    color: red;
+}
+
+/* Labels: warm ivory for clarity */
+QLabel {
+    color: #F5E6D3;
+    font-weight: 600;
+    background: transparent;
+}
+
+/* Slider groove and handle with warm tones and smooth hover */
+QSlider::groove:horizontal {
+    height: 8px;
+    background: rgba(100, 40, 40, 0.7);
+    border-radius: 4px;
+}
+QSlider::handle:horizontal {
+    background: rgba(210, 170, 90, 0.9);
+    border: 1px solid rgba(180, 140, 70, 0.9);
+    width: 18px;
+    margin: -6px 0;
+    border-radius: 9px;
+}
+QSlider::handle:horizontal:hover {
+    background: rgba(255, 215, 110, 1);
+}
+
+/* Scrollbar: warm gold highlights */
+QScrollBar::vertical {
+    width: 12px;
+    background: transparent;
+}
+QScrollBar::groove:vertical {
+    width: 8px;
+    background: rgba(100, 40, 40, 0.7);
+    border-radius: 4px;
+}
+QScrollBar::handle:vertical {
+    background: rgba(210, 170, 90, 0.8);
+    border: 1px solid rgba(180, 140, 70, 0.9);
+    width: 18px;
+    margin: -6px 0;
+    border-radius: 9px;
+}
+QScrollBar::handle:vertical:hover {
+    background: rgba(255, 215, 120, 1);
+}
+
+
+/* ComboBox: charcoal with warm gold border */
+QComboBox {
+    background-color: rgba(50, 35, 35, 0.9);
+    border: 1.8px solid rgba(210, 170, 90, 0.9);
+    border-radius: 5px;
+    padding: 6px 8px;
+    color: #F5E6D3;
+}
+QComboBox:hover {
+    border-color: rgba(255, 215, 120, 1);
+}
+QComboBox QAbstractItemView {
+    background-color: rgba(40, 30, 30, 0.95);
+    border: 1.5px solid rgba(190, 160, 110, 0.9);
+    color: #F5E6D3;
+    selection-background-color: rgba(255, 215, 120, 0.7);
+}
+
+/* GroupBox: dark with warm gold subtle glow */
+QGroupBox {
+    border: 1.6px solid rgba(210, 170, 90, 0.9);
+    border-radius: 7px;
+    margin-top: 22px;
+    background: rgba(30, 25, 25, 0.7);
+}
+QGroupBox:hover {
+    border-color: rgba(255, 215, 120, 1);
+}
+QGroupBox::title {
+    subcontrol-origin: margin;
+    subcontrol-position: top center;
+    padding: 0 8px;
+    font-weight: 700;
+    color: rgba(255, 230, 180, 0.95);
+}
