@@ -98,6 +98,18 @@ void MainWindow::tick() {
     ui->display_gameno->setText(QString::number(game.get_gameNo()));
     ui->display_pot->setText("$" + QString::number(game.get_pot()));
 
+    static QLineEdit* display_usernames[] = {
+        ui->username_0,
+        ui->username_1,
+        ui->username_2,
+        ui->username_3,
+        ui->username_4,
+        ui->username_5,
+    };
+    for (int i = 0; i < int(game.get_players().size()); ++i) {
+        display_usernames[i]->setText(QString::fromStdString(game.get_players()[i].get_username()));
+    }
+
     // player stacks
     static QLineEdit* display_stacks[] = {
         ui->display_stack0,

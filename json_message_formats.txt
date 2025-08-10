@@ -1,0 +1,114 @@
+MESSAGE JSON FORMATS:
+
+{
+    "type": "JOIN_GAME",
+    "payload": {
+        "username": <username>
+    }
+}
+
+{
+    "type": "PLAYER_ACTION",
+    "payload": {
+	"player_id": <player_id>,
+        "action": <action>,
+        "amount": <raise_amt>
+    }
+}
+
+{
+    "type": "REQUEST_STATE",
+    "payload": {}
+}
+
+{
+    "type": "ACTION_LOG",
+    "payload": {
+        "message": <message>
+    }
+}
+
+{
+    "type": "GAME_STATE",
+    "payload": {
+        "players": [
+            {
+                "username": <username>,
+                "stack": <stack>,
+		"role": "BB"
+            },
+            ...
+            {
+                "username": <username>,
+                "stack": <stack>,
+		"role": "None"
+                }
+            }
+        ],
+        "game_no": <game_no>
+        "round": <round>,
+        "pot": <pot_amt>,
+        "board": [<card>, <card>, ...],
+        "current_player": <current_player_index>
+    }
+}
+
+{
+    "type": "PLAYER_JOINED",
+    "payload": {
+        "player_id": <player_id>,
+        "username": <username>
+    }
+}
+
+{
+    "type": "PLAYER_LEFT",
+    "payload": {
+        "player_id": <player_id>
+    }
+}
+
+{
+    "type": "DEAL_HOLE_CARDS",
+    "payload": {
+        "cards": [<card>, <card>]
+    }
+}
+
+{
+    "type": "DEAL_COMMUNITY",
+    "payload": {
+        "round": <round>,
+        "board": [<card>, ...]
+    }
+}
+
+{
+    "type": "ROUND_END",
+    "payload": {[
+	{
+	    "winner_id": <player_id>,
+            "payout": <winnings>
+	},
+	{
+	    "winner_ids": <player_id>,
+            "payout": <winnings>
+	},
+        ...
+    ]}
+}
+
+{
+    "type": "REVEAL_CARDS",
+    "payload": {
+        "player_id": <player_id>,
+        "cards": [<card>, <card>]
+    }
+}
+
+{
+    "type": "ERROR",
+    "payload": {
+        "message": <error_msg>
+    }
+}

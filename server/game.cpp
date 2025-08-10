@@ -2,13 +2,15 @@
 #include "game.hpp"
 using namespace std;
 
+vector<string> usernames = {"Michael", "Alice", "Bob", "Charlie", "David", "Evan"};
+
 GameState::GameState(int num_players) {
     gameNo = 0;
     round = PREFLOP;
     pot = 0;
     community_cards = {};
     deck = Deck();
-    for (int i = 0; i < num_players; ++i) players.emplace_back(i, INITIALSTACK);
+    for (int i = 0; i < num_players; ++i) players.emplace_back(i, usernames[i], INITIALSTACK);
     current_player_index = -1;
     dealer_index = -1;
     sb_index = -1;
@@ -111,7 +113,7 @@ void GameState::update_history(Player player, Action new_action) {
     };
     string action_message;
     if (!history_string.empty()) action_message += "\n";
-    action_message += "> Player " + to_string(player.get_playerID()) + " " + action_to_string[new_action.type];
+    action_message += "> " + player.get_username() + " " + action_to_string[new_action.type];
     if (new_action.type == RAISE) {
         if (history.size() > 1) action_message += " another";
         action_message += " $" + to_string(new_action.amount);

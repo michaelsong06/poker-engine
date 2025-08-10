@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -9,19 +9,27 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    client/clientgamewindow.cpp \
     main.cpp \
     mainwindow.cpp \
     server/cards.cpp \
     server/evaluate.cpp \
     server/game.cpp \
-    server/player.cpp
+    server/player.cpp \
+    server/server.cpp \
+    client/client.cpp \
+    server/serverworker.cpp
 
 HEADERS += \
-    cards.hpp \
-    evaluate.hpp \
-    game.hpp \
+    client/clientgamewindow.hpp \
+    server/cards.hpp \
+    server/evaluate.hpp \
+    server/game.hpp \
     mainwindow.hpp \
-    player.hpp
+    server/player.hpp \
+    server/server.hpp \
+    client/client.hpp \
+    server/serverworker.hpp
 
 FORMS += \
     mainwindow.ui

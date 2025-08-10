@@ -4,7 +4,7 @@
 using namespace std;
 
 
-Player::Player(int newID, int init_stack) : playerID(newID), stack(init_stack), to_call(0), folded(false), hole_cards({}) {}
+Player::Player(int newID, string new_username, int init_stack) : playerID(newID), username(new_username), stack(init_stack), to_call(0), folded(false), hole_cards({}) {}
 
 int Player::get_playerID() const {
     return playerID;
@@ -13,6 +13,12 @@ int Player::get_stack() const {
     return stack;
 }
 
+string Player::get_username() const {
+    return username;
+}
+void Player::set_username(const string& new_username) {
+    username = new_username;
+}
 
 int Player::bet(int amount) {
     if (stack >= amount) {
