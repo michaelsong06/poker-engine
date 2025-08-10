@@ -10,7 +10,11 @@ CONFIG += c++17
 
 SOURCES += \
     main.cpp \
-    mainwindow.cpp
+    mainwindow.cpp \
+    server/cards.cpp \
+    server/evaluate.cpp \
+    server/game.cpp \
+    server/player.cpp
 
 HEADERS += \
     cards.hpp \
