@@ -5,9 +5,11 @@
 #include <QTcpSocket>
 #include <QJsonObject>
 #include <QJsonDocument>
+#include <QJsonArray>
 #include <QDebug>
 
 #include "serverworker.hpp"
+#include "engine.hpp"
 
 using namespace std;
 
@@ -32,4 +34,5 @@ private:
     void receiveJson(ServerWorker *sender, const QJsonObject &doc);
     void sendJson(ServerWorker *destination, const QJsonObject &msg);
     QVector<ServerWorker*> clients;
+    Engine* gameEngine;
 };

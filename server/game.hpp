@@ -40,6 +40,8 @@ private:
     int last_raiser_index;
     int last_to_act_index;
     vector<bool> acted;
+    int min_raise;
+    int max_raise;
     vector<pair<Player,Action>> history;
     string history_string;
     Evaluator evaluator;

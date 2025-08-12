@@ -14,7 +14,11 @@ Client::Client(QObject *parent) : QObject(parent), clientSocket(new QTcpSocket(t
 
     connect(clientSocket, &QTcpSocket::readyRead, this, &Client::onReadyRead);
 
+#if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
+    connect(clientSocket, QOverload<QAbstractSocket::SocketError>::of(&QAbstractSocket::error), this, &Client::error);
+#else
     connect(clientSocket, &QAbstractSocket::errorOccurred, this, &Client::error);
+#endif
 
     connect(clientSocket, &QTcpSocket::disconnected, this, &Client::logout);
 }
@@ -24,7 +28,7 @@ void Client::login(const QString& username) {
     if (clientSocket->state() == QAbstractSocket::ConnectedState) {
 
         QDataStream clientStream(clientSocket);
-        clientStream.setVersion(QDataStream::Qt_5_7);
+        clientStream.setVersion(CLIENT_VERSION);
 
         QJsonObject message;
         message["type"] = QStringLiteral("JOIN_GAME");
@@ -45,7 +49,7 @@ void Client::logout() {
 void Client::makeAction(const QString& actionType, int raise_amt) {
 
     QDataStream clientStream(clientSocket);
-    clientStream.setVersion(QDataStream::Qt_5_7);
+    clientStream.setVersion(CLIENT_VERSION);
 
     QJsonObject message;
     message["type"] = QStringLiteral("PLAYER_ACTION");
@@ -70,7 +74,7 @@ void Client::onReadyRead() {
 
     QByteArray jsonData;
     QDataStream socketStream(clientSocket);
-    socketStream.setVersion(QDataStream::Qt_5_7);
+    socketStream.setVersion(CLIENT_VERSION);
 
     for (;;) {
         socketStream.startTransaction();
@@ -107,7 +111,7 @@ void Client::jsonReceived(const QJsonObject &doc) {
         int player_id = payload.value(QLatin1String("player_id")).toInt();
 
         // TODO: Update UI to show player left
-        return
+        return;
 
     } else if (type == QLatin1String("GAME_STATE")) {
 
@@ -187,6 +191,20 @@ void Client::jsonReceived(const QJsonObject &doc) {
 
         // TODO: update UI to reflect round end winners receiving their money
 
+    } else if (type == QLatin1String("REVEAL_CARDS")) {
+
+        int player_id = payload.value(QLatin1String("player_id")).toInt();
+        QJsonArray cardsArray = payload.value(QLatin1String("cards")).toArray();
+        QString hole_1 = cardsArray[0].toString();
+        QString hole_2 = cardsArray[1].toString();
+
+        // TODO: update UI to reveal hole cards for that player
+
+    } else if (type == QLatin1String("ERROR")) {
+
+        const QString message = payload.value(QLatin1String("message")).toString();
+
+        // TODO: update UI to let player know what the error is
     }
 }
 

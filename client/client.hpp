@@ -4,6 +4,12 @@
 #include <QTcpSocket>
 #include <QJsonObject>
 
+#define CLIENT_VERSION QDataStream::Version::Qt_5_7
+
+#define SERVER_PORT 1967
+
+#define SERVER_IP "127.0.0.1"
+
 class Client : public QObject
 {
     Q_OBJECT
@@ -23,8 +29,10 @@ signals:
     void loggedIn();
     void loginError(const QString &reason);
     void disconnected();
-    void actionReceived(const QString &sender);
+    void actionReceived(int sender_id, const QString &actionType, int raise_amt);
     void error(QAbstractSocket::SocketError socketError);
+    void newClientJoined(const QString &username, int player_id);
+    void clientLeft(const QString &username, int player_id);
 private:
     QTcpSocket* clientSocket;
     bool clientLoggedIn;

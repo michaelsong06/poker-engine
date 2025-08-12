@@ -1,0 +1,25 @@
+#pragma once
+
+#include <QWidget>
+#include <QMessageBox>
+#include "server.hpp"
+
+namespace Ui {
+class ServerWindow;
+}
+class Server;
+class ServerWindow : public QWidget
+{
+    Q_OBJECT
+    Q_DISABLE_COPY(ServerWindow)
+public:
+    explicit ServerWindow(QWidget *parent = nullptr);
+    ~ServerWindow();
+
+private:
+    Ui::ServerWindow *ui;
+    Server* server;
+private slots:
+    void toggleStartServer();
+    void logMessage(const QString &msg);
+};

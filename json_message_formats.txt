@@ -11,8 +11,8 @@ MESSAGE JSON FORMATS:
     "type": "PLAYER_ACTION",
     "payload": {
 	"player_id": <player_id>,
-        "action": <action>,
-        "amount": <raise_amt>
+        "action": <[CALL/CHECK/RAISE/FOLD]>
+        "raise_amt": <raise_amt>
     }
 }
 
@@ -85,17 +85,19 @@ MESSAGE JSON FORMATS:
 
 {
     "type": "ROUND_END",
-    "payload": {[
-	{
-	    "winner_id": <player_id>,
-            "payout": <winnings>
-	},
-	{
-	    "winner_ids": <player_id>,
-            "payout": <winnings>
-	},
-        ...
-    ]}
+    "payload": {
+	"winners": [
+	    {
+	        "winner_id": <player_id>,
+                "payout": <winnings>
+	    },
+	    {
+	        "winner_ids": <player_id>,
+                "payout": <winnings>
+	    },
+            ...
+        ]
+    }
 }
 
 {

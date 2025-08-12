@@ -18,6 +18,8 @@ GameState::GameState(int num_players) {
     last_raiser_index = -1;
     last_to_act_index = 0;
     acted = vector<bool>(players.size(), false);
+    min_raise = SMALLBLIND;
+    max_raise = INITIALSTACK;
     history = {};
     history_string = "";
     evaluator = Evaluator();
@@ -85,6 +87,9 @@ void GameState::next_player() {
     do {
         current_player_index = (current_player_index + 1) % players.size();
     } while (get_current_player().has_folded());
+
+    min_raise = max(get_current_player().get_to_call(), BIGBLIND);
+    max_raise = get_current_player().get_stack();
 }
 
 bool GameState::get_acted(int index) const {
@@ -169,6 +174,7 @@ int GameState::make_action(Action new_action) {
         player.set_to_call(0);
         break;
     case RAISE:
+        if (new_action.amount < min_raise) return -1; // needs to be at least min raise
         if (new_action.amount >= player.get_stack()) all_in = true;
         pot += player.bet(player.get_to_call() + new_action.amount);
         player.set_to_call(0);
@@ -305,6 +311,9 @@ void GameState::init_new_game() {
     while (players[current_player_index].has_folded()) current_player_index = (dealer_index + 1) % players.size();
     last_raiser_index = -1;
     last_to_act_index = dealer_index;
+
+    min_raise = SMALLBLIND;
+    max_raise = get_current_player().get_stack();
 
     if (gameNo > 1) history_string += "\n";
     history_string += "> -----Game " + to_string(gameNo) + "-----";
