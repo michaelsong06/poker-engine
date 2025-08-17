@@ -13,6 +13,12 @@
 
 using namespace std;
 
+#define CLIENT_VERSION QDataStream::Version::Qt_5_7
+
+#define SERVER_PORT 1967
+
+#define SERVER_IP "127.0.0.1"
+
 class Server : public QTcpServer
 {
     Q_OBJECT

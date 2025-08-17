@@ -8,6 +8,8 @@ LoginWindow::LoginWindow(QWidget *parent)
     ui->setupUi(this);
 
     connect(ui->playButton, &QPushButton::clicked, this, &LoginWindow::handleLogin);
+
+    setMinimumSize(1200, 740);
 }
 
 LoginWindow::~LoginWindow()

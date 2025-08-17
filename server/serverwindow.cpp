@@ -7,6 +7,7 @@ ServerWindow::ServerWindow(QWidget *parent)
     , server(new Server(this))
 {
     ui->setupUi(this);
+    connect(ui->startStopButton, &QPushButton::clicked, this, &ServerWindow::toggleStartServer);
     connect(server, &Server::logMessage, this, &ServerWindow::logMessage);
 }
 
@@ -22,7 +23,7 @@ void ServerWindow::toggleStartServer()
         ui->startStopButton->setText(tr("Start Server"));
         logMessage(QStringLiteral("Server Stopped"));
     } else {
-        if (!server->listen(QHostAddress::Any, 1967)) {
+        if (!server->listen(QHostAddress::Any, SERVER_PORT)) {
             QMessageBox::critical(this, tr("Error"), tr("Unable to start the server"));
             return;
         }

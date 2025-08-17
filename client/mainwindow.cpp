@@ -16,6 +16,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     setCentralWidget(stack);
 
+    stack->setCurrentWidget(login);
+
+    setMinimumSize(1200, 740);
+
     connect(login, &LoginWindow::loginAttempted, game, &GameWindow::attemptConnection);
 
     connect(game, &GameWindow::loggedIn, this, [this](){ stack->setCurrentWidget(game); });

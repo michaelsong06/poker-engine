@@ -31,7 +31,7 @@ void Client::login(const QString& username) {
         clientStream.setVersion(CLIENT_VERSION);
 
         QJsonObject message;
-        message["type"] = QStringLiteral("JOIN_GAME");
+        message["type"] = QStringLiteral("JOIN_GAME_REQUEST");
 
         QJsonObject payload;
         payload["username"] = username;
@@ -40,6 +40,10 @@ void Client::login(const QString& username) {
 
         clientStream << QJsonDocument(message).toJson();
     }
+}
+
+void Client::set_playerID(int id) {
+    playerID = id;
 }
 
 void Client::logout() {
@@ -58,6 +62,18 @@ void Client::makeAction(const QString& actionType, int raise_amt) {
     payload["action"] = actionType;
     payload["amount"] = raise_amt;
 
+    message["payload"] = payload;
+
+    clientStream << QJsonDocument(message).toJson();
+}
+
+void Client::requestState() {
+    QDataStream clientStream(clientSocket);
+    clientStream.setVersion(CLIENT_VERSION);
+
+    QJsonObject message;
+    message["type"] = QStringLiteral("REQUEST_STATE");
+    QJsonObject payload;
     message["payload"] = payload;
 
     clientStream << QJsonDocument(message).toJson();
@@ -95,22 +111,31 @@ void Client::jsonReceived(const QJsonObject &doc) {
     const QString type = doc.value(QLatin1String("type")).toString();
     const QJsonObject payload = doc.value(QLatin1String("payload")).toObject();
 
-    if (type == QLatin1String("PLAYER_JOINED")) {
+    if (type == QLatin1String("JOIN_GAME_ACCEPT")) {
         if (clientLoggedIn) return; // already logged in
 
         const int player_id = payload.value(QLatin1String("player_id")).toInt();
         const QString username = payload.value(QLatin1String("username")).toString();
 
-        // TODO: Update UI to show new player client joined
+        emit loggedIn(player_id, username);
 
-        emit loggedIn();
+        requestState();
+        return;
+
+    } else if (type == QLatin1String("PLAYER_JOINED")) {
+
+        const int player_id = payload.value(QLatin1String("player_id")).toInt();
+        const QString username = payload.value(QLatin1String("username")).toString();
+
+        emit newClientJoined(username, player_id);
         return;
 
     } else if (type == QLatin1String("PLAYER_LEFT")) {
 
-        int player_id = payload.value(QLatin1String("player_id")).toInt();
+        const int player_id = payload.value(QLatin1String("player_id")).toInt();
+        const QString username = payload.value(QLatin1String("username")).toString();
 
-        // TODO: Update UI to show player left
+        emit clientLeft(username, player_id);
         return;
 
     } else if (type == QLatin1String("GAME_STATE")) {
@@ -120,17 +145,16 @@ void Client::jsonReceived(const QJsonObject &doc) {
             if (!playerVal.isObject()) continue;
             QJsonObject playerObj = playerVal.toObject();
 
+            int player_id = playerObj.value(QLatin1String("player_id")).toInt();
             QString username = playerObj.value(QLatin1String("username")).toString();
             int stack = playerObj.value(QLatin1String("stack")).toInt();
             QString role = playerObj.value(QLatin1String("role")).toString();
 
-            // TODO: Update UI to show each player's name and stack
+            emit playerStateReceived(player_id, username, stack, role);
         }
 
         int game_no = payload.value(QLatin1String("game_no")).toInt();
-        QString round = payload.value(QLatin1String("round")).toString();
         int pot = payload.value(QLatin1String("pot")).toInt();
-
         QJsonArray boardArray = payload.value(QLatin1String("board")).toArray();
         QStringList board;
         for (const QJsonValue &cardVal : boardArray) {
@@ -138,7 +162,10 @@ void Client::jsonReceived(const QJsonObject &doc) {
         }
         int current_player_index = payload.value(QLatin1String("current_player")).toInt();
 
+        int to_call = payload.value(QLatin1String("to_call")).toInt();
+
         // TODO: Update UI to show all these states
+        emit gameStateReceived(game_no, pot, board, current_player_index, to_call);
         return;
 
     } else if (type == QLatin1String("DEAL_HOLE_CARDS")) {
@@ -148,6 +175,7 @@ void Client::jsonReceived(const QJsonObject &doc) {
         QString hole_2 = cards[1].toString();
 
         // TODO: Update UI to display the hole cards for this specific client
+        emit holeCardsReceived(playerID, hole_1, hole_2);
         return;
 
     } else if (type == QLatin1String("DEAL_COMMUNITY")) {
@@ -159,23 +187,26 @@ void Client::jsonReceived(const QJsonObject &doc) {
             board.append(cardVal.toString());
         }
 
-        // TODO: Update UI to display new board
+        emit boardReceived(board);
         return;
 
     } else if (type == QLatin1String("ACTION_LOG")) {
 
         const QString message = payload.value(QLatin1String("message")).toString();
 
-        // TODO: update UI action log to display new message
+        emit gameLogReceived(message);
         return;
 
     } else if (type == QLatin1String("PLAYER_ACTION")) {
 
         int player_id = payload.value(QLatin1String("player_id")).toInt();
+        const QString username = payload.value(QLatin1String("username")).toString();
         const QString action = payload.value(QLatin1String("action")).toString();
-        int amount = payload.value(QLatin1String("amount")).toInt();
+        int to_call = payload.value(QLatin1String("to_call")).toInt();
+        int raise_amt = payload.value(QLatin1String("raise_amt")).toInt();
 
-        // TODO: update UI to reflect new action by player
+        emit actionReceived(player_id, username, action, to_call, raise_amt);
+        return;
 
     } else if (type == QLatin1String("ROUND_END")) {
 
@@ -189,7 +220,8 @@ void Client::jsonReceived(const QJsonObject &doc) {
             winners.append({winner_id, payout});
         }
 
-        // TODO: update UI to reflect round end winners receiving their money
+        emit winnersReceived(winners);
+        return;
 
     } else if (type == QLatin1String("REVEAL_CARDS")) {
 
@@ -198,16 +230,18 @@ void Client::jsonReceived(const QJsonObject &doc) {
         QString hole_1 = cardsArray[0].toString();
         QString hole_2 = cardsArray[1].toString();
 
-        // TODO: update UI to reveal hole cards for that player
+        emit holeCardsReceived(player_id, hole_1, hole_2);
 
     } else if (type == QLatin1String("ERROR")) {
 
         const QString message = payload.value(QLatin1String("message")).toString();
+        emit gameLogReceived(message);
 
-        // TODO: update UI to let player know what the error is
+        requestState();
+        return;
+
     }
 }
-
 
 
 

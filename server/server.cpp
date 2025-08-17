@@ -42,17 +42,17 @@ void Server::jsonReceived(ServerWorker *sender, const QJsonObject &doc) {
     const QString type = doc.value(QLatin1String("type")).toString();
     const QJsonObject payload = doc.value(QLatin1String("payload")).toObject();
 
-    if (type == QLatin1String("JOIN_GAME")) {
+    if (type == QLatin1String("JOIN_GAME_REQUEST")) {
 
         const QString username = payload.value(QLatin1String("username")).toString();
 
         // TODO: player joining game
 
         QJsonObject message;
-        message["type"] = "PLAYER_JOINED";
+        message["type"] = "JOIN_GAME_ACCEPT";
 
         QJsonObject payload;
-        // payload["player_id"] = 1;
+        payload["player_id"] = 1; // player id allocation TODO
         payload["username"] = username;
 
         message["payload"] = payload;
@@ -76,7 +76,7 @@ void Server::jsonReceived(ServerWorker *sender, const QJsonObject &doc) {
         const string action_str = payload.value(QLatin1String("action")).toString().toStdString();
         if (!string_to_action.count(action_str)) return;
 
-        int amount = payload.value(QLatin1String("raise_amt")).toInt();
+        int amount = payload.value(QLatin1String("amount")).toInt();
 
         Action action = Action(string_to_action[action_str], amount);
         gameEngine->makeAction(action);
@@ -119,7 +119,6 @@ void Server::jsonReceived(ServerWorker *sender, const QJsonObject &doc) {
             {TURN, "TURN"},
             {RIVER, "RIVER"}
         };
-        gameState[QLatin1String("round")] = QString::fromStdString(round_to_string[gameEngine->get_round()]);
         gameState[QLatin1String("pot")] = gameEngine->get_pot();
 
         QJsonArray board;
@@ -135,7 +134,6 @@ void Server::jsonReceived(ServerWorker *sender, const QJsonObject &doc) {
 
     } else if (type == QLatin1String("REVEAL_CARDS")) {
         // Received from a specific player (player_id), and is broadcast out to every client
-
         broadcast(doc, sender);
 
     }

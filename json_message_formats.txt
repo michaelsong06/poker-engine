@@ -1,8 +1,16 @@
 MESSAGE JSON FORMATS:
 
 {
-    "type": "JOIN_GAME",
+    "type": "JOIN_GAME_REQUEST",
     "payload": {
+        "username": <username>
+    }
+}
+
+{
+    "type": "JOIN_GAME_ACCEPT",
+    "payload": {
+	"player_id": <player_id>
         "username": <username>
     }
 }
@@ -11,7 +19,9 @@ MESSAGE JSON FORMATS:
     "type": "PLAYER_ACTION",
     "payload": {
 	"player_id": <player_id>,
-        "action": <[CALL/CHECK/RAISE/FOLD]>
+	"username": <username>
+        "action": <[CALL/CHECK/RAISE/FOLD]>,
+	"to_call": <to_call>,
         "raise_amt": <raise_amt>
     }
 }
@@ -33,20 +43,21 @@ MESSAGE JSON FORMATS:
     "payload": {
         "players": [
             {
+		"player_id": <player_id>,
                 "username": <username>,
                 "stack": <stack>,
 		"role": "BB"
             },
             ...
             {
+		"player_id": <player_id>,
                 "username": <username>,
                 "stack": <stack>,
 		"role": "None"
                 }
             }
         ],
-        "game_no": <game_no>
-        "round": <round>,
+        "game_no": <game_no>,
         "pot": <pot_amt>,
         "board": [<card>, <card>, ...],
         "current_player": <current_player_index>
@@ -64,7 +75,8 @@ MESSAGE JSON FORMATS:
 {
     "type": "PLAYER_LEFT",
     "payload": {
-        "player_id": <player_id>
+	"player_id": <player_id>
+	"username": <username>
     }
 }
 
@@ -78,7 +90,6 @@ MESSAGE JSON FORMATS:
 {
     "type": "DEAL_COMMUNITY",
     "payload": {
-        "round": <round>,
         "board": [<card>, ...]
     }
 }
